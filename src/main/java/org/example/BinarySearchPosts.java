@@ -5,11 +5,17 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.util.Scanner;
+
 public class BinarySearchPosts {
     public static void main(String[] args) {
+        // 사용자로부터 날짜를 입력받습니다.
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the target date (Format: yy.MM.dd): ");
+        String targetDate = scanner.nextLine();
+
         int left = 1;
         int right = 47622; // 전체 페이지 수
-        String targetDate = "23.10.07";
 
         int firstPage = findFirstPage(left, right, targetDate);
         int lastPage = findLastPage(left, right, targetDate);

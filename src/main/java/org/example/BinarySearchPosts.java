@@ -43,7 +43,6 @@ public class BinarySearchPosts {
     private static int findLastPage(int left, int right, String targetDate) {
         while (left < right) {
             int mid = left + (right - left + 1) / 2;  // Adjust for upper bound
-            System.out.printf("L : %s, mid : %s, R : %s\n", left,mid,right);
             int result = containsDate(mid, targetDate);
 
             if (result == 2) { // 임계점: targetDate를 포함하는 페이지

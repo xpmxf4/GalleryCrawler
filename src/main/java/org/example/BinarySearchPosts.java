@@ -25,7 +25,6 @@ public class BinarySearchPosts {
     private static int findFirstPage(int left, int right, String targetDate) {
         while (left < right) {
             int mid = left + (right - left) / 2;
-            System.out.printf("L : %s, mid : %s, R : %s\n", left,mid,right);
             int result = containsDate(mid, targetDate);
             if (result == 2) { // 임계점: targetDate를 포함하는 페이지
                 right = mid; // 임계점을 찾으면 오른쪽 경계를 당깁니다.
@@ -43,18 +42,21 @@ public class BinarySearchPosts {
 
     private static int findLastPage(int left, int right, String targetDate) {
         while (left < right) {
-            int mid = left + (right - left + 1) / 2;
+            int mid = left + (right - left + 1) / 2;  // Adjust for upper bound
+            System.out.printf("L : %s, mid : %s, R : %s\n", left,mid,right);
             int result = containsDate(mid, targetDate);
-            if (result == 2) {  // 임계점 발견
-                return mid;  // 해당 페이지 번호를 반환
-            } else if (result == 1) {
-                left = mid;
-            } else {
+
+            if (result == 2) { // 임계점: targetDate를 포함하는 페이지
+                left = mid; // 임계점을 찾으면 왼쪽 경계를 당깁니다.
+            } else if (result == 0) { // 페이지의 모든 게시물의 날짜가 targetDate보다 늦습니다.
+                left = mid + 1;
+            } else { // 페이지의 모든 게시물의 날짜가 targetDate보다 이릅니다.
                 right = mid - 1;
             }
         }
-        return right; // or left, since left == right here
+        return right; // 이진 탐색이 완료된 후 right는 마지막 targetDate가 있는 페이지를 가리킵니다.
     }
+
 
 
 

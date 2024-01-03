@@ -7,7 +7,6 @@ import org.jsoup.select.Elements;
 
 public class BinarySearchPosts {
     public static void main(String[] args) {
-        System.setProperty("jsse.enableSNIExtension", "false");
         int left = 1;
         int right = 47622; // 전체 페이지 수
         String targetDate = "23.10.07";
@@ -37,9 +36,6 @@ public class BinarySearchPosts {
         return left; // 이진 탐색이 완료된 후 left는 첫 번째 targetDate가 있는 페이지를 가리킵니다.
     }
 
-
-
-
     private static int findLastPage(int left, int right, String targetDate) {
         while (left < right) {
             int mid = left + (right - left + 1) / 2;  // Adjust for upper bound
@@ -55,9 +51,6 @@ public class BinarySearchPosts {
         }
         return right; // 이진 탐색이 완료된 후 right는 마지막 targetDate가 있는 페이지를 가리킵니다.
     }
-
-
-
 
     private static int containsDate(int page, String targetDate) {
         try {

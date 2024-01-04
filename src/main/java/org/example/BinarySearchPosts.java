@@ -60,7 +60,7 @@ public class BinarySearchPosts {
 
     private static int containsDate(int page, String targetDate) {
         try {
-            String url = "http://gall.dcinside.com/board/lists/?id=football_new8&list_num=50&sort_type=N&list_num=100&search_head=&page=" + page;
+            String url = "http://gall.dcinside.com/board/lists/?id=football_new8&list_num=100&sort_type=N&list_num=100&search_head=&page=" + page;
             Document doc = Jsoup.connect(url).get();
             Elements usPosts = doc.select(".us-post"); // Select .us_post elements
 

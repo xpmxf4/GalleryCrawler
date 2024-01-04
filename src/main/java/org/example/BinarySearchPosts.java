@@ -21,7 +21,7 @@ public class BinarySearchPosts {
         int lastPage = findLastPage(left, right, targetDate);
 
         // 게시물의 수 추정
-        int estCount = (lastPage - firstPage + 1) * 50;
+        int estCount = (lastPage - firstPage + 1) * 100;
 
         System.out.println("firstPage = " + firstPage);
         System.out.println("lastPage = " + lastPage);

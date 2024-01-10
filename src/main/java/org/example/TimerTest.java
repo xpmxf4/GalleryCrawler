@@ -3,7 +3,7 @@ package org.example;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class FiveSecondTimer {
+public class TimerTest {
 
     public static void main(String[] args) {
         Timer timer = new Timer();

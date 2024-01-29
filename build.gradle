@@ -26,14 +26,14 @@ test {
 jar {
     manifest {
         attributes(
-                'Main-Class': 'org.example.DCPopularPostsTest'
+                'Main-Class': 'org.example.DCPopularPostsTracker'
         )
     }
 }
 
 shadowJar {
     manifest {
-        attributes 'Main-Class': 'org.example.DCPopularPostsTest'
+        attributes 'Main-Class': 'org.example.DCPopularPostsTracker'
     }
     exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA'
 }

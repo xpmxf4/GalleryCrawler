@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class DCPopularPostsTracker {
-    private static final String JSON_FILE = "dc_popular_posts.json";
+    private static final String JSON_FILE = "dc_popular_posts2.json";
     private static Map<String, JSONObject> postsMap = new HashMap<>();
     private static final String URL = "http://gall.dcinside.com/board/lists/?id=football_new8";
 

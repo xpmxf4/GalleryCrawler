@@ -20,3 +20,12 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+// build 시 Main-Class 지정
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'org.example.DCPopularPostsTest'
+        )
+    }
+}

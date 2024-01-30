@@ -1,4 +1,4 @@
-package org.example;
+package org.example.test;
 
 import org.json.JSONObject;
 import org.jsoup.Jsoup;

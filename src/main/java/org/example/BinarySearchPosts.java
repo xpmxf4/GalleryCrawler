@@ -27,6 +27,7 @@ public class BinarySearchPosts {
         System.out.println("lastPage = " + lastPage);
         System.out.println("estCount = " + estCount);
     }
+
     private static int findFirstPage(int left, int right, String targetDate) {
         while (left < right) {
             int mid = left + (right - left) / 2;

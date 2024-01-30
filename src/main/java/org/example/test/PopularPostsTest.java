@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DCPopularPostsTest {
+public class PopularPostsTest {
     public static void main(String[] args) {
         Map<String, JSONObject> postsMap = trackPopularPosts();
         for (String key : postsMap.keySet()) {

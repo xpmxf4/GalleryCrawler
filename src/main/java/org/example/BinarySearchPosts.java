@@ -7,6 +7,7 @@ import org.jsoup.select.Elements;
 
 import java.util.Scanner;
 
+// 특정 날짜에 얼마나 게시물이 생성되는 지 확인하는 클래스
 public class BinarySearchPosts {
     public static void main(String[] args) {
         // 사용자로부터 날짜를 입력받습니다.

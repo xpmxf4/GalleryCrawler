@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+@Slf4j
 public class DCPopularPostsTracker {
     private static final String JSON_FILE = "dc_popular_posts2.json";
     private static Map<String, JSONObject> postsMap = new HashMap<>();

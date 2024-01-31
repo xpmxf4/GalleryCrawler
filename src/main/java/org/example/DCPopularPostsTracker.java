@@ -82,7 +82,7 @@ public class DCPopularPostsTracker {
         Element view = postDoc.selectFirst(".view_content_wrap .gall_count");
         try {
             return Integer.parseInt(view.text().replaceAll("[^\\d]", ""));
-        } catch (Exception e) {
+        } catch (Exception e) { // 도중에 게시물을 지워버리는 경우가 존재함.
             return 0;
         }
     }

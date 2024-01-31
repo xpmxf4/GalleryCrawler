@@ -24,7 +24,11 @@ public class DCPopularPostsTracker {
         TimerTask halfHourlyTask = new TimerTask() {
             @Override
             public void run() {
-                trackPopularPosts();
+                try {
+                    trackPopularPosts();
+                } catch (Exception e) {
+                    System.err.println("Error tracking popular posts: " + e.getMessage());
+                }
             }
         };
 
@@ -32,19 +36,20 @@ public class DCPopularPostsTracker {
         timer.scheduleAtFixedRate(halfHourlyTask, THIRTY_MINUTES, THIRTY_MINUTES);
     }
 
-    public static void trackPopularPosts() {
-        try {
-            Elements posts = fetchPopularPosts();
-            String currentDate = getCurrentDate();
+    public static void trackPopularPosts() throws IOException {
+        Elements posts = fetchPopularPosts();
+        String currentDate = getCurrentDate();
 
-            for (Element post : posts) {
+        for (Element post : posts) {
+            try {
                 processPost(post, currentDate);
+            } catch (IOException e) {
+                // 게시물을 처리하는 동안 발생할 수 있는 IOException을 처리합니다.
+                System.err.println("Failed to process post: " + e.getMessage());
             }
-
-            writeJSONToFile();
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
         }
+
+        writeJSONToFile();
     }
 
     private static Elements fetchPopularPosts() throws IOException {
@@ -80,11 +85,7 @@ public class DCPopularPostsTracker {
     private static int fetchPostViewCount(String postLink) throws IOException {
         Document postDoc = Jsoup.connect(postLink).get();
         Element view = postDoc.selectFirst(".view_content_wrap .gall_count");
-        try {
-            return Integer.parseInt(view.text().replaceAll("[^\\d]", ""));
-        } catch (Exception e) { // 도중에 게시물을 지워버리는 경우가 존재함.
-            return 0;
-        }
+        return Integer.parseInt(view.text().replaceAll("[^\\d]", ""));
     }
 
     private static void writeJSONToFile() {
@@ -94,7 +95,8 @@ public class DCPopularPostsTracker {
             file.write(postsList.toString());
             file.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            // JSON 파일을 작성하는 동안 발생할 수 있는 IOException을 처리합니다.
+            System.err.println("Failed to write JSON to file: " + e.getMessage());
         }
     }
 }

@@ -1,78 +1,96 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>게시물 시각화</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="../js/script1.js"></script>
 </head>
+
 <body>
-<script>
-    console.log(jsonData)
-</script>
+    <div style="width:80%;margin-bottom: 100px;">
+        <canvas id="totalViewsChart"></canvas>
+    </div>
+    <div style="width:80%;">
+        <canvas id="viewCountIncrementsChart"></canvas>
+    </div>
 
-<div style="width:60%;">
-    <canvas id="totalViewsChart"></canvas>
-</div>
-<div style="width:60%;">
-    <canvas id="viewCountIncrementsChart"></canvas>
-</div>
-
-<script>
-    // 데이터 설정
-    var titles = JSON.parse(`{{titles_str}}`);
-    var totalViews = JSON.parse(`{{total_views_str}}`);
-    var viewCountIncrements = JSON.parse(`{{view_count_increments_str}}`);
-    var timeLabels = JSON.parse(`{{time_labels_str}}`);
-
-    // 총 조회수 차트
-    var ctxTotalViews = document.getElementById('totalViewsChart').getContext('2d');
-    var totalViewsChart = new Chart(ctxTotalViews, {
-        type: 'bar',
-        data: {
-            labels: titles,
-            datasets: [{
-                label: 'Total Views',
-                data: totalViews,
-                backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // 데이터 설정
+            var titles = jsonData.result.map(function (post) {
+                return post.title;
+            });
+            var totalViews = jsonData.result.map(function (post) {
+                return post.total_views[post.total_views.length - 1].count;
+            });
+            var viewCountIncrements = jsonData.result.map(function (post) {
+                var increments = [];
+                for (var i = 1; i < post.total_views.length; i++) {
+                    increments.push(post.total_views[i].count - post.total_views[i - 1].count);
                 }
-            },
-            indexAxis: 'y'
-        }
-    });
+                return increments;
+            });
 
-    // 조회수 증가 추세 차트
-    var ctxIncrements = document.getElementById('viewCountIncrementsChart').getContext('2d');
-    var incrementsChart = new Chart(ctxIncrements, {
-        type: 'line',
-        data: {
-            labels: timeLabels,
-            datasets: viewCountIncrements.map(function (increments, index) {
-                return {
-                    label: titles[index],
-                    data: increments,
-                    fill: false,
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    tension: 0.1
+            // 시간대 라벨 계산
+            var maxIncrementsLength = Math.max.apply(Math, viewCountIncrements.map(function (increments) {
+                return increments.length;
+            }));
+            var timeLabels = Array.from({ length: maxIncrementsLength }, function (_, i) {
+                return 'Interval ' + (i + 1);
+            });
+
+            // 총 조회수 차트
+            var ctxTotalViews = document.getElementById('totalViewsChart').getContext('2d');
+            var totalViewsChart = new Chart(ctxTotalViews, {
+                type: 'bar',
+                data: {
+                    labels: titles,
+                    datasets: [{
+                        label: 'Total Views',
+                        data: totalViews,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    indexAxis: 'y'
                 }
-            })
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
+            });
+
+            // 조회수 증가 추세 차트
+            var ctxIncrements = document.getElementById('viewCountIncrementsChart').getContext('2d');
+            var incrementsChart = new Chart(ctxIncrements, {
+                type: 'line',
+                data: {
+                    labels: timeLabels,
+                    datasets: viewCountIncrements.map(function (increments, index) {
+                        return {
+                            label: titles[index],
+                            data: increments,
+                            fill: false,
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            tension: 0.1
+                        }
+                    })
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
                 }
-            }
-        }
-    });
-</script>
+            });
+        });
+    </script>
 
 </body>
+
 </html>

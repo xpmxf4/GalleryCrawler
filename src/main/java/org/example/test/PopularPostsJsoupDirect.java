@@ -1,5 +1,6 @@
 package org.example.test;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -7,6 +8,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,11 +20,9 @@ public class PopularPostsJsoupDirect {
         Map<String, JSONObject> postsMap = null;
         try {
             postsMap = trackPopularPosts();
+            savePostsToJsonFile(postsMap, "popular_posts.json");
         } catch (IOException e) {
             System.err.println(e.getMessage());
-        }
-        for (String key : postsMap.keySet()) {
-            System.out.println(postsMap.get(key));
         }
     }
 
@@ -60,5 +61,15 @@ public class PopularPostsJsoupDirect {
         }
 
         return postsMap;
+    }
+
+    public static void savePostsToJsonFile(Map<String, JSONObject> postsMap, String fileName) throws IOException {
+        JSONArray postsArray = new JSONArray();
+        for (String key : postsMap.keySet()) {
+            postsArray.put(postsMap.get(key));
+        }
+
+        Files.write(Paths.get(fileName), postsArray.toString().getBytes());
+        System.out.println("Saved posts to " + fileName);
     }
 }

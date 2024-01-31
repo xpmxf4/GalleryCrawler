@@ -17,30 +17,19 @@ public class DCPopularPostsTracker {
     private static Map<String, JSONObject> postsMap = new HashMap<>();
     private static final String URL = "http://gall.dcinside.com/board/lists/?id=football_new8";
 
-    private static final long ONE_HOUR = 1000 * 60 * 60;
+    private static final long THIRTY_MINUTES = 1000 * 60 * 30; // 30분
 
     public static void main(String[] args) {
         Timer timer = new Timer();
-        TimerTask hourlyTask = new TimerTask() {
+        TimerTask halfHourlyTask = new TimerTask() {
             @Override
             public void run() {
                 trackPopularPosts();
             }
         };
 
-        long delay = calculateInitialDelay();
-        timer.scheduleAtFixedRate(hourlyTask, delay, ONE_HOUR);
-    }
-
-    private static long calculateInitialDelay() {
-        Calendar now = Calendar.getInstance();
-        Calendar nextHour = (Calendar) now.clone();
-        nextHour.set(Calendar.MINUTE, 0);
-        nextHour.set(Calendar.SECOND, 0);
-        nextHour.set(Calendar.MILLISECOND, 0);
-        nextHour.add(Calendar.HOUR, 1);
-
-        return nextHour.getTimeInMillis() - now.getTimeInMillis();
+        // 첫 실행을 30분 후로 설정하고, 그 후 30분마다 반복 실행
+        timer.scheduleAtFixedRate(halfHourlyTask, THIRTY_MINUTES, THIRTY_MINUTES);
     }
 
     public static void trackPopularPosts() {
@@ -76,8 +65,14 @@ public class DCPopularPostsTracker {
         JSONObject postJSON = postsMap.getOrDefault(postLink, new JSONObject());
         postJSON.put("title", postTitle);
         postJSON.put("link", postLink);
-        postJSON.put("total_views", count);
-        postJSON.put("last_updated", currentDate);
+
+        // 조회수 기록을 배열로 관리
+        JSONArray viewCounts = postJSON.optJSONArray("total_views");
+        if (viewCounts == null) {
+            viewCounts = new JSONArray();
+        }
+        viewCounts.put(new JSONObject().put("count", count).put("time", currentDate));
+        postJSON.put("total_views", viewCounts);
 
         postsMap.put(postLink, postJSON);
     }

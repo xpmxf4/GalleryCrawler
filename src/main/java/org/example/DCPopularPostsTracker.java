@@ -17,7 +17,7 @@ public class DCPopularPostsTracker {
     private static Map<String, JSONObject> postsMap = new HashMap<>();
     private static final String URL = "http://gall.dcinside.com/board/lists/?id=football_new8";
 
-    private static final long THIRTY_MINUTES = 1000 * 60 * 30; // 30분
+    private static final long THIRTY_MINUTES = 1000 * 60 * (long) 30; // 30분
 
     public static void main(String[] args) {
         Timer timer = new Timer();

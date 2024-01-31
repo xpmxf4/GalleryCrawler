@@ -43,7 +43,7 @@ public class DCPopularPostsTracker {
 
             writeJSONToFile();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
@@ -80,7 +80,11 @@ public class DCPopularPostsTracker {
     private static int fetchPostViewCount(String postLink) throws IOException {
         Document postDoc = Jsoup.connect(postLink).get();
         Element view = postDoc.selectFirst(".view_content_wrap .gall_count");
-        return Integer.parseInt(view.text().replaceAll("[^\\d]", ""));
+        try {
+            return Integer.parseInt(view.text().replaceAll("[^\\d]", ""));
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     private static void writeJSONToFile() {

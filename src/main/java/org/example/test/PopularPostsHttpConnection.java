@@ -33,6 +33,8 @@ public class PopularPostsHttpConnection {
             String html = fetchHtml(url);
             Document postDocs = Jsoup.parse(html);
             Elements posts = postDocs.select(".concept_txtlist li a");
+//            System.out.println("posts = " + posts);
+//            System.out.println("=============================================");
 
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String currentDate = formatter.format(new Date());
@@ -40,6 +42,10 @@ public class PopularPostsHttpConnection {
             for (Element post : posts) {
                 String postTitle = post.text();
                 String postLink = post.attr("href").replace("https", "http");
+                if (postLink.contains("amp;")) {
+                    postLink = postLink.replace("amp;", "");
+                }
+                System.out.println("postLink = " + postLink);
                 String postPageHtml = fetchHtml(postLink);
                 Document postDoc = Jsoup.parse(postPageHtml);
                 Element view = postDoc.selectFirst(".view_content_wrap .gall_count");

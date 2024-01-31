@@ -1,0 +1,3 @@
+IOException: http://gall.dcinside.com/board/view/?id=football_new8&no=6129473
+IOException: http://gall.dcinside.com/board/view/?id=football_new8&no=6129384
+IOException: http://gall.dcinside.com/board/view/?id=football_new8&no=6129384

@@ -1,6 +1,5 @@
 package org.example;
 
-import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -13,7 +12,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-@Slf4j
 public class DCPopularPostsTracker {
     private static final String JSON_FILE = "dc_popular_posts2.json";
     private static Map<String, JSONObject> postsMap = new HashMap<>();

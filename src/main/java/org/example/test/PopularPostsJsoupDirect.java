@@ -18,7 +18,7 @@ public class PopularPostsJsoupDirect {
         try {
             postsMap = trackPopularPosts();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
         }
         for (String key : postsMap.keySet()) {
             System.out.println(postsMap.get(key));
@@ -52,7 +52,7 @@ public class PopularPostsJsoupDirect {
 
                 postsMap.put(postLink, postJSON);
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                System.err.println(e.getMessage());
             }
         }
 

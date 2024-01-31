@@ -34,9 +34,10 @@ public class PopularPostsJsoupDirect {
         String currentDate = formatter.format(new Date());
 
         for (Element post : posts) {
+            String postLink = "";
             try {
                 String postTitle = post.text();
-                String postLink = post.attr("href").replace("https", "http"); // 'https'를 'http'로 변경
+                postLink = post.attr("href").replace("https", "http"); // 'https'를 'http'로 변경
                 if (postLink.contains("amp;")) {
                     postLink = postLink.replace("amp;", "");
                 }
@@ -51,8 +52,10 @@ public class PopularPostsJsoupDirect {
                 postJSON.put("last_updated", currentDate);
 
                 postsMap.put(postLink, postJSON);
+            } catch (NumberFormatException e) {
+                System.err.println("Parsing error for post: " + postLink + " - " + e.getMessage());
             } catch (Exception e) {
-                System.err.println(e.getMessage());
+                System.err.println("Error processing post: " + postLink);
             }
         }
 

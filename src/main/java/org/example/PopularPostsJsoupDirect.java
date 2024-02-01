@@ -1,7 +1,7 @@
-package org.example.test;
+package org.example;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -11,24 +11,23 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 public class PopularPostsJsoupDirect {
     public static void main(String[] args) {
-        Map<String, JSONObject> postsMap = null;
         try {
-            postsMap = trackPopularPosts();
-            savePostsToJsonFile(postsMap, "popular_posts.json");
+            List<Post> postsList = trackPopularPosts();
+            savePostsToJsonFile(postsList, "popular_posts.json");
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
     }
 
-    public static Map<String, JSONObject> trackPopularPosts() throws IOException {
+    public static List<Post> trackPopularPosts() throws IOException {
         String url = "http://gall.dcinside.com/board/lists/?id=football_new8";
-        Map<String, JSONObject> postsMap = new HashMap<>();
+        List<Post> postsList = new ArrayList<>();
         Document postDocs = Jsoup.connect(url).get();
         Elements posts = postDocs.select(".concept_txtlist li a");
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -38,21 +37,22 @@ public class PopularPostsJsoupDirect {
             String postLink = "";
             try {
                 String postTitle = post.text();
-                postLink = post.attr("href").replace("https", "http"); // 'https'를 'http'로 변경
+                postLink = post.attr("href").replace("https", "http");
                 if (postLink.contains("amp;")) {
                     postLink = postLink.replace("amp;", "");
                 }
                 Document postDoc = Jsoup.connect(postLink).get();
                 Element view = postDoc.selectFirst(".view_content_wrap .gall_count");
-                int count = Integer.parseInt(view.text().replaceAll("[^\\d]", "")); // 숫자만 추출
+                int count = Integer.parseInt(view.text().replaceAll("[^\\d]", ""));
 
-                JSONObject postJSON = new JSONObject();
-                postJSON.put("title", postTitle);
-                postJSON.put("link", postLink);
-                postJSON.put("total_views", count);
-                postJSON.put("last_updated", currentDate);
+                Post postObject = Post.builder()
+                        .title(postTitle)
+                        .link(postLink)
+                        .totalViews(count)
+                        .lastUpdated(currentDate)
+                        .build();
 
-                postsMap.put(postLink, postJSON);
+                postsList.add(postObject);
             } catch (NumberFormatException e) {
                 System.err.println("Parsing error for post: " + postLink + " - " + e.getMessage());
             } catch (Exception e) {
@@ -60,16 +60,15 @@ public class PopularPostsJsoupDirect {
             }
         }
 
-        return postsMap;
+        return postsList;
     }
 
-    public static void savePostsToJsonFile(Map<String, JSONObject> postsMap, String fileName) throws IOException {
-        JSONArray postsArray = new JSONArray();
-        for (String key : postsMap.keySet()) {
-            postsArray.put(postsMap.get(key));
-        }
+    public static void savePostsToJsonFile(List<Post> postsList, String fileName) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-        Files.write(Paths.get(fileName), postsArray.toString().getBytes());
+        String json = mapper.writeValueAsString(postsList);
+        Files.write(Paths.get(fileName), json.getBytes());
         System.out.println("Saved posts to " + fileName);
     }
 }

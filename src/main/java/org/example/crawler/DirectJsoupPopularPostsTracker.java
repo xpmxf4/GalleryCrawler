@@ -1,7 +1,8 @@
-package org.example;
+package org.example.crawler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.example.model.Post;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class PopularPostsJsoupDirect {
+public class DirectJsoupPopularPostsTracker {
     public static void main(String[] args) {
         try {
             List<Post> postsList = trackPopularPosts();

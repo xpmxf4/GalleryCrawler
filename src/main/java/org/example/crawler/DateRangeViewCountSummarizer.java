@@ -1,4 +1,4 @@
-package org.example;
+package org.example.crawler;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -7,7 +7,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 
-public class SumViewCountsByDate {
+public class DateRangeViewCountSummarizer {
     public static void main(String[] args) throws IOException {
         String url = "http://gall.dcinside.com/board/lists/?id=football_new8&list_num=100&sort_type=N&list_num=100&search_head=&page=";
         int firstPage = 9472;

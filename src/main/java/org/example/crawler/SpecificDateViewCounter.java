@@ -1,4 +1,4 @@
-package org.example;
+package org.example.crawler;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -8,7 +8,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.Scanner;
 
-public class TotalViewCountCrawler {
+public class SpecificDateViewCounter {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);

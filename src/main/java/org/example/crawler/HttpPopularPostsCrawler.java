@@ -1,4 +1,4 @@
-package org.example;
+package org.example.crawler;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PopularPostsHttpConnection {
+public class HttpPopularPostsCrawler {
     private static final String OUTPUT_FILE = "posts_output.json";
     private static final String ERROR_LOG_FILE = "error_log.txt";
 

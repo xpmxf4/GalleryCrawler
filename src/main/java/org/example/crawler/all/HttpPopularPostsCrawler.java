@@ -33,32 +33,11 @@ public class HttpPopularPostsCrawler {
             String html = fetchHtml(url);
             Document postDocs = Jsoup.parse(html);
             Elements posts = postDocs.select(".concept_txtlist li a");
-//            System.out.println("posts = " + posts);
-//            System.out.println("=============================================");
 
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String currentDate = formatter.format(new Date());
 
-            for (Element post : posts) {
-                String postTitle = post.text();
-                String postLink = post.attr("href").replace("https", "http");
-                if (postLink.contains("amp;")) {
-                    postLink = postLink.replace("amp;", "");
-                }
-                System.out.println("postLink = " + postLink);
-                String postPageHtml = fetchHtml(postLink);
-                Document postDoc = Jsoup.parse(postPageHtml);
-                Element view = postDoc.selectFirst(".view_content_wrap .gall_count");
-                int count = Integer.parseInt(view.text().replaceAll("[^\\d]", ""));
-
-                JSONObject postJSON = new JSONObject();
-                postJSON.put("title", postTitle);
-                postJSON.put("link", postLink);
-                postJSON.put("total_views", count);
-                postJSON.put("last_updated", currentDate);
-
-                postsMap.put(postLink, postJSON);
-            }
+            loopForMapping(postsMap, posts, currentDate);
         } catch (UnknownHostException e) {
             writeErrorToFile("UnknownHostException: " + e.getMessage());
         } catch (SocketTimeoutException e) {
@@ -67,6 +46,29 @@ public class HttpPopularPostsCrawler {
             writeErrorToFile("IOException: " + e.getMessage());
         }
         return postsMap;
+    }
+
+    private static void loopForMapping(Map<String, JSONObject> postsMap, Elements posts, String currentDate) throws IOException {
+        for (Element post : posts) {
+            String postTitle = post.text();
+            String postLink = post.attr("href").replace("https", "http");
+            if (postLink.contains("amp;")) {
+                postLink = postLink.replace("amp;", "");
+            }
+            System.out.println("postLink = " + postLink);
+            String postPageHtml = fetchHtml(postLink);
+            Document postDoc = Jsoup.parse(postPageHtml);
+            Element view = postDoc.selectFirst(".view_content_wrap .gall_count");
+            int count = Integer.parseInt(view.text().replaceAll("[^\\d]", ""));
+
+            JSONObject postJSON = new JSONObject();
+            postJSON.put("title", postTitle);
+            postJSON.put("link", postLink);
+            postJSON.put("total_views", count);
+            postJSON.put("last_updated", currentDate);
+
+            postsMap.put(postLink, postJSON);
+        }
     }
 
     private static void writeJSONToFile(Map<String, JSONObject> postsMap, String fileName) {

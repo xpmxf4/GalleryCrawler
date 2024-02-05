@@ -1,4 +1,4 @@
-package org.example.crawler;
+package org.example.crawler.views;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -8,6 +8,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.Scanner;
 
+// 특정 날짜에 조회수가 총 얼마인가
 public class SpecificDateViewCounter {
 
     public static void main(String[] args) {

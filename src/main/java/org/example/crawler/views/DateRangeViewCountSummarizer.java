@@ -1,4 +1,4 @@
-package org.example.crawler;
+package org.example.crawler.views;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

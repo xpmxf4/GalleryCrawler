@@ -1,4 +1,4 @@
-package org.example.crawler;
+package org.example.crawler.post;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -7,7 +7,7 @@ import org.jsoup.select.Elements;
 
 import java.util.Scanner;
 
-// 특정 날짜에 얼마나 게시물이 생성되는 지 확인하는 클래스
+// 특정 날짜에 몇 개의 게시물이 생성되었는가
 public class DateSpecificPostFinder {
     public static void main(String[] args) {
         // 사용자로부터 날짜를 입력받습니다.

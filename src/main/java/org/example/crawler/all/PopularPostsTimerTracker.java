@@ -1,4 +1,4 @@
-package org.example.crawler;
+package org.example.crawler.all;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

@@ -1,5 +1,6 @@
-package org.example.crawler.post;
+package org.example.crawler.util;
 
+import lombok.NoArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -7,31 +8,28 @@ import org.jsoup.select.Elements;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
 
-// 특정 날짜에 몇 개의 게시물이 생성되었는가
-public class DateSpecificPostNumsFinder {
-    public static void main(String[] args) {
-        // 사용자로부터 날짜를 입력받습니다.
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the target date (Format: yyyy-MM-dd): ");
-        String targetDate = scanner.nextLine();
+@NoArgsConstructor
+public class DateBasedPostTracker implements IDateBasedPostTracker{
+    private static final int MIN_PAGE = 1;
+    private static final int MAX_PAGE = 47622;
+    private static final int POSTS_PER_PAGE = 100; // 페이지 당 게시물 수
 
-        int left = 1;
-        int right = 47622; // 전체 페이지 수
+    @Override
+    public int estimatePostCountForDate(String targetDate) {
+        int firstPage = findFirstPage(targetDate);
+        int lastPage = findLastPage(targetDate);
 
-        int firstPage = findFirstPage(left, right, targetDate);
-        int lastPage = findLastPage(left, right, targetDate);
+        if (firstPage > lastPage) return -1;
 
-        // 게시물의 수 추정
-        int estCount = (lastPage - firstPage + 1) * 100;
-
-        System.out.println("firstPage = " + firstPage);
-        System.out.println("lastPage = " + lastPage);
-        System.out.println("estCount = " + estCount);
+        return (lastPage - firstPage + 1) * POSTS_PER_PAGE;
     }
 
-    private static int findFirstPage(int left, int right, String targetDate) {
+    @Override
+    public int findFirstPage(String targetDate) {
+        int left = MIN_PAGE;
+        int right = MAX_PAGE;
+
         while (left < right) {
             int mid = left + (right - left) / 2;
             int result = containsDate(mid, targetDate);
@@ -46,7 +44,11 @@ public class DateSpecificPostNumsFinder {
         return left; // 이진 탐색이 완료된 후 left는 첫 번째 targetDate가 있는 페이지를 가리킵니다.
     }
 
-    private static int findLastPage(int left, int right, String targetDate) {
+    @Override
+    public int findLastPage(String targetDate) {
+        int left = MIN_PAGE;
+        int right = MAX_PAGE;
+
         while (left < right) {
             int mid = left + (right - left + 1) / 2;  // Adjust for upper bound
             int result = containsDate(mid, targetDate);

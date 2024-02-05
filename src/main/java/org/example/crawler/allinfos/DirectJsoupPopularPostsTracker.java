@@ -1,4 +1,4 @@
-package org.example.crawler.all;
+package org.example.crawler.allinfos;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

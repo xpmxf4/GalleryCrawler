@@ -5,6 +5,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 // 특정 날짜에 몇 개의 게시물이 생성되었는가
@@ -12,7 +14,7 @@ public class DateSpecificPostFinder {
     public static void main(String[] args) {
         // 사용자로부터 날짜를 입력받습니다.
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the target date (Format: yy.MM.dd): ");
+        System.out.print("Enter the target date (Format: yyyy-MM-dd): ");
         String targetDate = scanner.nextLine();
 
         int left = 1;
@@ -62,31 +64,30 @@ public class DateSpecificPostFinder {
 
     private static int containsDate(int page, String targetDate) {
         try {
-            String url = "http://gall.dcinside.com/board/lists/?id=football_new8&list_num=100&sort_type=N&list_num=100&search_head=&page=" + page;
+            String url = "http://gall.dcinside.com/board/lists/?id=football_new8&sort_type=N&list_num=100&search_head=&page=" + page;
             Document doc = Jsoup.connect(url).get();
             Elements usPosts = doc.select(".us-post"); // Select .us_post elements
 
-            // 가장 이른 날짜와 가장 늦은 날짜를 초기화합니다.
-            String earliestDate = "99.99.99"; // 임의의 늦은 날짜로 초기화
-            String latestDate = "00.00.00"; // 임의의 이른 날짜로 초기화
+            LocalDate earliestDate = LocalDate.MAX;
+            LocalDate latestDate = LocalDate.MIN;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
             for (Element usPost : usPosts) {
-                Element date = usPost.selectFirst(".gall_date");
-                String postDate = date.text();
+                String postDateTime = usPost.selectFirst(".gall_date").attr("title");
+                LocalDate postDate = LocalDate.parse(postDateTime.split(" ")[0], formatter);
 
-                // 가장 이른 날짜와 가장 늦은 날짜를 업데이트합니다.
-                if (postDate.compareTo(earliestDate) < 0) {
+                if (postDate.isBefore(earliestDate)) {
                     earliestDate = postDate;
                 }
-                if (postDate.compareTo(latestDate) > 0) {
+                if (postDate.isAfter(latestDate)) {
                     latestDate = postDate;
                 }
             }
 
-            // 날짜 범위와 targetDate를 비교합니다.
-            if (earliestDate.compareTo(targetDate) <= 0 && latestDate.compareTo(targetDate) >= 0) {
+            LocalDate target = LocalDate.parse(targetDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            if (!earliestDate.isAfter(target) && !latestDate.isBefore(target)) {
                 return 2; // 임계점: targetDate를 포함하는 페이지
-            } else if (latestDate.compareTo(targetDate) < 0) {
+            } else if (latestDate.isBefore(target)) {
                 return 1; // 페이지의 모든 게시물의 날짜가 targetDate보다 이릅니다.
             } else {
                 return 0; // 페이지의 모든 게시물의 날짜가 targetDate보다 늦습니다.

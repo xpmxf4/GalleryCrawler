@@ -37,7 +37,7 @@ public class HttpPopularPostsCrawler {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String currentDate = formatter.format(new Date());
 
-            loopForMapping(postsMap, posts, currentDate);
+            loopPostsForMapping(postsMap, posts, currentDate);
         } catch (UnknownHostException e) {
             writeErrorToFile("UnknownHostException: " + e.getMessage());
         } catch (SocketTimeoutException e) {
@@ -48,7 +48,7 @@ public class HttpPopularPostsCrawler {
         return postsMap;
     }
 
-    private static void loopForMapping(Map<String, JSONObject> postsMap, Elements posts, String currentDate) throws IOException {
+    private static void loopPostsForMapping(Map<String, JSONObject> postsMap, Elements posts, String currentDate) throws IOException {
         for (Element post : posts) {
             String postTitle = post.text();
             String postLink = post.attr("href").replace("https", "http");

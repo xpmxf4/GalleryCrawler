@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 // 특정 날짜에 몇 개의 게시물이 생성되었는가
-public class DateSpecificPostFinder {
+public class DateSpecificPostNumsFinder {
     public static void main(String[] args) {
         // 사용자로부터 날짜를 입력받습니다.
         Scanner scanner = new Scanner(System.in);

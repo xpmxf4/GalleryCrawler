@@ -1,32 +1,82 @@
-package org.example.crawler.util;
+package org.example.dcinsidecrawler.tracker;
 
 import lombok.NoArgsConstructor;
+import org.example.dcinsidecrawler.provider.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 @NoArgsConstructor
-public class DateBasedPostTracker implements IDateBasedPostTracker{
+public class DateBasedPostTracker implements IDateBasedPostTracker {
     private static final int MIN_PAGE = 1;
     private static final int MAX_PAGE = 47622;
     private static final int POSTS_PER_PAGE = 100; // 페이지 당 게시물 수
 
     @Override
-    public int estimatePostCountForDate(String targetDate) {
-        int firstPage = findFirstPage(targetDate);
-        int lastPage = findLastPage(targetDate);
+    public int getViewCountsBetweenDates(String startDate, String endDate) {
+        int result = 0;
+        LocalDate currentDate = LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalDate lastDate = LocalDate.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
-        if (firstPage > lastPage) return -1;
+        while (!currentDate.isAfter(lastDate)) {
+            String targetDate = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            int firstPage = getFirstPage(targetDate);
+            int lastPage = getLastPage(targetDate);
 
-        return (lastPage - firstPage + 1) * POSTS_PER_PAGE;
+            if (firstPage != -1 && lastPage != -1) {
+                result += getViewCountsForDate(targetDate, firstPage, lastPage);
+            }
+
+            currentDate = currentDate.plusDays(1);
+        }
+
+        return result;
     }
 
     @Override
-    public int findFirstPage(String targetDate) {
+    public int getViewCountOnDate(String date) {
+        int firstPage = getFirstPage(date);
+        int lastPage = getLastPage(date);
+
+        if (firstPage == -1 || lastPage == -1) {
+            return 0; // 그 어떤 게시글도 찾아지지 않음
+        }
+
+        return getViewCountsForDate(date, firstPage, lastPage);
+    }
+
+    private int getViewCountsForDate(String targetDate, int firstPage, int lastPage) {
+        int viewCount = 0;
+        for (int page = firstPage; page <= lastPage; page++) {
+            String url = GalleryUrlProvider.getGalleryUrl(targetDate) + page;
+            try {
+                Document doc = Jsoup.connect(url).get();
+                Elements posts = doc.select(".us-post");
+
+                for (Element post : posts) {
+                    Element dateElement = post.selectFirst(".gall_date");
+                    String postDate = dateElement.attr("title").split(" ")[0];
+
+                    if (postDate.equals(targetDate)) {
+                        Element viewCountElement = post.selectFirst(".gall_count");
+                        int postViewCount = Integer.parseInt(viewCountElement.text());
+                        viewCount += postViewCount;
+                    }
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to fetch data from URL: " + url, e);
+            }
+        }
+        return viewCount;
+    }
+
+    @Override
+    public int getFirstPage(String targetDate) {
         int left = MIN_PAGE;
         int right = MAX_PAGE;
 
@@ -45,7 +95,7 @@ public class DateBasedPostTracker implements IDateBasedPostTracker{
     }
 
     @Override
-    public int findLastPage(String targetDate) {
+    public int getLastPage(String targetDate) {
         int left = MIN_PAGE;
         int right = MAX_PAGE;
 
@@ -65,8 +115,8 @@ public class DateBasedPostTracker implements IDateBasedPostTracker{
     }
 
     private static int containsDate(int page, String targetDate) {
+        String url = GalleryUrlProvider.getGalleryUrl(targetDate) + page;
         try {
-            String url = "http://gall.dcinside.com/board/lists/?id=football_new8&sort_type=N&list_num=100&search_head=&page=" + page;
             Document doc = Jsoup.connect(url).get();
             Elements usPosts = doc.select(".us-post"); // Select .us_post elements
 
@@ -94,11 +144,8 @@ public class DateBasedPostTracker implements IDateBasedPostTracker{
             } else {
                 return 0; // 페이지의 모든 게시물의 날짜가 targetDate보다 늦습니다.
             }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to fetch data from URL: " + url, e);
         }
-        return -1;
     }
-
-
 }
